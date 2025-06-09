@@ -535,7 +535,7 @@ class PuntoVenta:
               command=self.agregar_con_multiplicador).pack(side=tk.RIGHT)
     
     # Configurar evento de teclado para código de barras
-    keyboard.on_press(self.on_key_press)
+        keyboard.on_press(self.on_key_press)
     
     def cargar_productos(self, filtro=None):
         self.product_tree.delete(*self.product_tree.get_children())
