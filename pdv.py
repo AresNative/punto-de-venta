@@ -9,7 +9,8 @@ from reportlab.pdfgen import canvas
 import random
 import threading
 import time
-
+import keyboard  # Para simular escaneo de código de barras
+from PIL import Image, ImageTk  # Para mostrar imagen de código de barras
 # --------------------------
 # Configuración de la base de datos
 # --------------------------
@@ -366,6 +367,8 @@ class PuntoVenta:
         self.crear_interfaz()
         self.cargar_productos()
         
+        self.codigo_barras_buffer = ""
+        self.codigo_barras_activo = False
         # Mostrar nombre de usuario
         self.usuario_label.config(text=f"Usuario: {self.nombre_usuario} ({self.rol_usuario})")
         
@@ -504,6 +507,35 @@ class PuntoVenta:
         ttk.Button(action_frame, 
                   text="Eliminar Producto", 
                   command=self.eliminar_producto).pack(side=tk.RIGHT, padx=5)
+        # Añadir sección de código de barras
+        barcode_frame = ttk.LabelFrame(left_panel, text="Escaneo de Código de Barras")
+        barcode_frame.pack(fill=tk.X, pady=(10, 5))
+        
+        self.barcode_image_label = ttk.Label(barcode_frame)
+        self.barcode_image_label.pack()
+        
+        ttk.Button(barcode_frame, 
+                text="Activar Escáner (F2)", 
+                command=self.toggle_barcode_scanner).pack(pady=5)
+        
+        self.barcode_status = ttk.Label(barcode_frame, text="Escáner: INACTIVO", foreground='red')
+        self.barcode_status.pack()
+        
+        # Modificar la función de agregar producto para incluir multiplicador
+        add_frame = ttk.Frame(left_panel)
+        add_frame.pack(fill=tk.X, pady=5)
+        
+        ttk.Label(add_frame, text="Multiplicador:").pack(side=tk.LEFT)
+        self.multiplier_var = tk.IntVar(value=1)
+        multiplier_spin = ttk.Spinbox(add_frame, from_=1, to=100, textvariable=self.multiplier_var, width=5)
+        multiplier_spin.pack(side=tk.LEFT, padx=5)
+        
+        ttk.Button(add_frame, 
+              text="Agregar al Carrito", 
+              command=self.agregar_con_multiplicador).pack(side=tk.RIGHT)
+    
+    # Configurar evento de teclado para código de barras
+    keyboard.on_press(self.on_key_press)
     
     def cargar_productos(self, filtro=None):
         self.product_tree.delete(*self.product_tree.get_children())
@@ -949,7 +981,66 @@ class PuntoVenta:
                 f"${precio:.2f}",
                 f"${total:.2f}"
             ))
+def toggle_barcode_scanner(self):
+    self.codigo_barras_activo = not self.codigo_barras_activo
+    if self.codigo_barras_activo:
+        self.barcode_status.config(text="Escáner: ACTIVO (Esperando código...)", foreground='green')
+        self.mostrar_imagen_barcode(True)
+    else:
+        self.barcode_status.config(text="Escáner: INACTIVO", foreground='red')
+        self.mostrar_imagen_barcode(False)
+        self.codigo_barras_buffer = ""
 
+def on_key_press(self, event):
+    if not self.codigo_barras_activo:
+        return
+    
+    if event.name == 'enter':
+        if len(self.codigo_barras_buffer) >= 8:  # Longitud mínima de código de barras
+            self.buscar_por_codigo_barras(self.codigo_barras_buffer)
+        self.codigo_barras_buffer = ""
+    elif event.name.isdigit():
+        self.codigo_barras_buffer += event.name
+
+def mostrar_imagen_barcode(self, activo):
+    if activo:
+        image = Image.open("barcode_active.png")  # Usar tu propia imagen
+    else:
+        image = Image.open("barcode_inactive.png")  # Usar tu propia imagen
+    
+    image = image.resize((200, 80), Image.LANCZOS)
+    photo = ImageTk.PhotoImage(image)
+    self.barcode_image_label.config(image=photo)
+    self.barcode_image_label.image = photo
+
+def buscar_por_codigo_barras(self, codigo):
+    # Buscar producto por código de barras (asumiendo que el código de producto es el de barras)
+    for item in self.product_tree.get_children():
+        if self.product_tree.item(item)['values'][0] == codigo:
+            self.product_tree.selection_set(item)
+            self.product_tree.focus(item)
+            self.agregar_con_multiplicador()
+            return
+    
+    messagebox.showwarning("No encontrado", f"No se encontró producto con código: {codigo}")
+
+# Método para agregar con multiplicador
+def agregar_con_multiplicador(self):
+    item = self.product_tree.selection()
+    if item:
+        multiplicador = self.multiplier_var.get()
+        id_prod = item[0]
+        self.agregar_a_carrito(id_prod, multiplicador)
+
+# Modificar el método agregar_a_carrito para manejar multiplicador:
+def agregar_a_carrito(self, id_prod, cantidad=1.0):
+    # ... (código existente)
+    
+    # Cambiar la validación de stock para considerar el multiplicador
+    if stock < cantidad:
+        messagebox.showwarning("Stock insuficiente", 
+                             f"No hay suficiente stock de {nombre}\nStock disponible: {stock}")
+        return
 # --------------------------
 # Función principal
 # --------------------------

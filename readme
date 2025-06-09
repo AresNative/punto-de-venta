@@ -1,1 +1,3 @@
 pip install reportlab
+
+pip install keyboard pillow
