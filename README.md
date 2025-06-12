@@ -48,15 +48,15 @@ keyboard
 O de manera idependiente:
 
 ```bash
+pip install tk
+```
+
+```bash
 pip install reportlab
 ```
 
 ```bash
 pip install keyboard pillow
-```
-
-```bash
-pip install -r requirements.txt
 ```
 
 ```bash
@@ -109,12 +109,6 @@ pyinstaller --noconfirm --onefile --windowed --add-data "assets;assets" main.py
 ```
 dist/main.exe
 ```
-
----
-
-## 🖼️ Recursos (Assets)
-
-Coloca las imágenes `barcode_active.png` y `barcode_inactive.png` en la carpeta `/assets`.
 
 ---
 
