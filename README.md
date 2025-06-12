@@ -59,10 +59,6 @@ pip install reportlab
 pip install keyboard pillow
 ```
 
-```bash
-pip install pyinstaller
-```
-
 ---
 
 ## ▶️ Ejecución del Proyecto
